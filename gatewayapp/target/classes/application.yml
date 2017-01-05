@@ -1,0 +1,23 @@
+spring:
+    application:
+        name: edgeserver
+
+server:
+  port: 8090
+
+zuul:
+  ignoredServices: "*"
+  routes:
+    POCAPIs:
+      path: /POCAPIs/**
+      stripPrefix: true
+      serviceId: POCAPIs
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://svcregistry:1111/eureka/
+    fetchRegistry: true
+    registryFetchIntervalSeconds: 2
+    healthcheck:
+        enabled: true

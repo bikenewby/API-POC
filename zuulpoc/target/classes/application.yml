@@ -1,0 +1,16 @@
+spring:
+  application:
+        name: POCAPIs
+
+server:
+  port: 8060
+#  port: 0 #Random port number
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://svcregistry:1111/eureka/
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 8

@@ -1,0 +1,3 @@
+com\scb\apipoc\filters\post\SimplePostFilter.class
+com\scb\apipoc\filters\pre\SimplePreFilter.class
+com\scb\apipoc\GatewayApplication.class

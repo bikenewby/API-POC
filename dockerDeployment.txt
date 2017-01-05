@@ -1,0 +1,77 @@
+#Refer to the Docker machine ip address below since the port mapping ( -p sss:ttt) is to map from container port to the docker machine port.
+
+192.168.99.100
+
+#General commands
+## List running docker container
+docker ps
+## List docker image
+docker images
+## Attach to existing container
+docker attach container_id
+
+#build docker image and push
+clean package docker:build -DpushImageTag
+
+#manual run docker container. In this case, the name can be used by other container for tcp host name, through the --link directive
+docker run -d -p 8090:8090 --name name_here --link=linktoothercontainername image_name
+
+
+#Running docker container shell command:
+docker run -it --rm alpine /bin/ash
+
+#Remove docker image
+docker rmi image_id --force
+
+#kill container
+docker ps
+docker kill containter_id
+
+
+#specific config for POC
+svcregistry/1111
+edgeserver/8090
+api/8060
+
+docker run -d -p 1111:1111 --name svcregistry scbpoc/poc-eureka
+docker run -d -p 8090:8090 --name edgeserver --link=svcregistry scbpoc/zuulpoc-gateway
+docker run -d --link=svcregistry scbpoc/zuulpoc-api
+
+#docker-compose.yml
+svcregistry:
+  image: scbpoc/poc-eureka
+  ports:
+    - "1111:1111"
+
+edgeserver:
+  image: scbpoc/zuulpoc-gateway
+  ports:
+    - "8090:8090"
+  links:
+    - svcregistry    
+
+api:
+  image: scbpoc/zuulpoc-api
+  links:
+    - svcregistry
+#---------------
+
+##Start up all containers defined in docker-compose.yml
+cd .\docker
+docker-compose up -d
+#Stop docker-compose
+docker-compose down
+
+#Scale specific container
+docker-compose scale api=2
+#2 = total number of instance including those already running. Can be used for both increase instance, as well as decrease instance.
+
+##Test calling docker services
+http://192.168.99.100:8090/POCAPIs/rest/v1/poc/available
+##Check health
+http://192.168.99.100:8090/health
+##Access Eureka dashboard
+http://192.168.99.100:1111
+##Access hystrix dashboard
+http://192.168.99.100:2222/hystrix
+Then enter "http://192.168.99.100:8090/hystrix.stream" on both URL and Title
